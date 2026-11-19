@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Trình Ban Giám hiệu{% endblock %}
+{% block content %}
+<h1>Văn bản chờ trình</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="g2" style="grid-template-columns:1.6fr 1fr">
+    <div class="k" style="padding:0">
+      <table>
+        <tr><th></th><th>Số đến</th><th>Số/ký hiệu</th><th>Trích yếu</th><th>Trạng thái</th></tr>
+        {% for vb in cho_trinh %}
+        <tr>
+          <td><input type="checkbox" name="chon" value="{{ vb.pk }}" aria-label="Chọn văn bản {{ vb.so_den }}" {% if vb.pk|stringformat:"s" in chon %}checked{% endif %}></td>
+          <td>{{ vb.so_den }}/{{ vb.nam }}</td><td>{{ vb.so_ky_hieu }}</td><td>{{ vb.trich_yeu }}</td>
+          <td><span class="bd {{ vb.trang_thai_vb }}">{{ vb.get_trang_thai_vb_display }}</span></td>
+        </tr>
+        {% empty %}<tr><td colspan="5">Không có văn bản nào chờ trình.</td></tr>{% endfor %}
+      </table>
+    </div>
+    <div class="k"><h3>Trình Ban Giám hiệu</h3>
+      <p>{{ form.nguoi_nhan.label_tag }}{{ form.nguoi_nhan }}{% for e in form.nguoi_nhan.errors %}<div class="loi">{{ e }}</div>{% endfor %}</p>
+      <p>{{ form.ghi_chu.label_tag }}{{ form.ghi_chu }}</p>
+      <p><label style="font-weight:400"><input type="checkbox" name="khan" {% if form.khan.value %}checked{% endif %}> {{ form.khan.label }}</label></p>
+      <p style="text-align:right"><a class="bt o" href="{% url 'vanbanden:danh_sach' %}">Hủy</a><button class="bt" type="submit">Trình</button></p>
+    </div>
+  </div>
+</form>
+{% endblock %}

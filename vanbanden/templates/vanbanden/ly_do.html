@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ tieu_de }}{% endblock %}
+{% block content %}
+<h1>{{ tieu_de }}</h1>
+<form method="post" class="k" style="max-width:640px">
+  {% csrf_token %}
+  <p class="ghichu">Văn bản số đến {{ vb.so_den }}/{{ vb.nam }} · {{ vb.so_ky_hieu }}</p>
+  {{ form.ly_do.label_tag }}{{ form.ly_do }}{% for e in form.ly_do.errors %}<div class="loi">{{ e }}</div>{% endfor %}
+  <p style="text-align:right;margin-top:14px"><a class="bt o" href="{% url 'vanbanden:chi_tiet' vb.pk %}">Hủy</a><button class="bt" type="submit">{{ nut }}</button></p>
+</form>
+{% endblock %}

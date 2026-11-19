@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{% if sua %}Sửa văn bản đến{% else %}Đăng ký văn bản đến{% endif %}{% endblock %}
+{% block content %}
+<h1>{% if sua %}Sửa thông tin văn bản đến{% else %}Đăng ký văn bản đến{% endif %}</h1>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="k"><h3>Thông tin văn bản (9 trường bắt buộc)</h3>
+    <div class="g">
+      <div><label>1. Số đến (tự cấp)</label><input type="text" value="{{ so_den }}" disabled></div>
+      {% for f in form %}{% if f.name != 'tep' and f.name != 'xac_nhan_trung' and f.name != 'trich_yeu' %}
+        <div>{{ f.label_tag }}{{ f }}{% for e in f.errors %}<div class="loi">{{ e }}</div>{% endfor %}</div>
+      {% endif %}{% endfor %}
+    </div>
+    <div style="margin-top:12px">{{ form.trich_yeu.label_tag }}{{ form.trich_yeu }}{% for e in form.trich_yeu.errors %}<div class="loi">{{ e }}</div>{% endfor %}</div>
+  </div>
+
+  <div class="k"><h3>Tệp đính kèm / Số hóa văn bản giấy</h3>
+    {% if tai_lieu_cu %}
+    <table style="margin-bottom:10px">
+      {% for t in tai_lieu_cu %}<tr><td><a href="{{ t.tep.url }}" target="_blank">{{ t.ten_tep }}</a></td><td>{{ t.dung_luong|filesizeformat }}</td><td><span class="bd DA_XU_LY_XONG">Đã lưu</span></td></tr>{% endfor %}
+    </table>
+    {% endif %}
+    <label for="id_tep" id="vung_tha" style="text-align:center;padding:22px;border:2px dashed #9fb3c8;border-radius:8px;background:#f6f9fd;color:#52606d;font-weight:400;cursor:pointer">
+      Kéo thả hoặc chọn tệp scan · PDF, JPG, PNG · tối đa 20 MB mỗi tệp
+    </label>
+    <div style="display:none">{{ form.tep }}</div>
+    <table id="ds_tep" style="margin-top:8px"></table>
+    {% for e in form.tep.errors %}<div class="loi">{{ e }}</div>{% endfor %}
+    {% if form.so_ky_hieu.errors or form.xac_nhan_trung.value %}
+    <label style="font-weight:400;margin-top:10px"><input type="checkbox" name="xac_nhan_trung" {% if form.xac_nhan_trung.value %}checked{% endif %}> {{ form.xac_nhan_trung.label }}</label>
+    {% endif %}
+  </div>
+
+  <div style="text-align:right">
+    <a class="bt o" href="{% if sua %}{% url 'vanbanden:chi_tiet' vb.pk %}{% else %}{% url 'vanbanden:danh_sach' %}{% endif %}">Hủy</a>
+    <button class="bt o" type="submit">{% if sua %}Lưu thay đổi{% else %}Đăng ký{% endif %}</button>
+    <button class="bt" type="submit" name="trinh" value="1">{% if sua %}Lưu và trình BGH{% else %}Đăng ký và trình BGH{% endif %}</button>
+  </div>
+</form>
+
+<script>
+// Danh sách tệp sắp tải lên: có Xem trước / Xóa như màn hình Figma
+(function () {
+  var input = document.getElementById('id_tep');
+  var vung = document.getElementById('vung_tha');
+  var bang = document.getElementById('ds_tep');
+  var dsTep = [];
+
+  function dongBo() {
+    var dt = new DataTransfer();
+    dsTep.forEach(function (f) { dt.items.add(f); });
+    input.files = dt.files;
+    ve();
+  }
+  function them(danhSach) {
+    Array.prototype.forEach.call(danhSach, function (f) { dsTep.push(f); });
+    dongBo();
+  }
+  function ve() {
+    bang.innerHTML = '';
+    dsTep.forEach(function (f, i) {
+      var tr = document.createElement('tr');
+      var tdTen = document.createElement('td'); tdTen.textContent = f.name;
+      var tdCo = document.createElement('td'); tdCo.textContent = (f.size / 1048576).toFixed(1) + ' MB';
+      var tdXem = document.createElement('td');
+      var a = document.createElement('a'); a.className = 'bt o'; a.textContent = 'Xem trước';
+      a.href = URL.createObjectURL(f); a.target = '_blank'; tdXem.appendChild(a);
+      var tdXoa = document.createElement('td');
+      var nut = document.createElement('button'); nut.type = 'button'; nut.className = 'bt r'; nut.textContent = 'Xóa';
+      nut.onclick = function () { dsTep.splice(i, 1); dongBo(); };
+      tdXoa.appendChild(nut);
+      tr.appendChild(tdTen); tr.appendChild(tdCo); tr.appendChild(tdXem); tr.appendChild(tdXoa);
+      bang.appendChild(tr);
+    });
+  }
+  input.addEventListener('change', function () { them(input.files); });
+  ['dragover', 'dragenter'].forEach(function (ev) {
+    vung.addEventListener(ev, function (e) { e.preventDefault(); });
+  });
+  vung.addEventListener('drop', function (e) { e.preventDefault(); them(e.dataTransfer.files); });
+})();
+</script>
+{% endblock %}

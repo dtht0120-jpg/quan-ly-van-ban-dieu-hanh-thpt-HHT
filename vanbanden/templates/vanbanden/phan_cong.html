@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Phân công xử lý{% endblock %}
+{% block content %}
+<h1>Phân công xử lý – văn bản số đến {{ vb.so_den }}/{{ vb.nam }}</h1>
+<div class="k"><h3>Bút phê của BGH</h3><p style="margin:0">{{ but_phe|linebreaksbr }}</p></div>
+<form method="post">
+  {% csrf_token %}
+  {{ formset.management_form }}
+  {{ formset.non_form_errors }}
+  <div class="k"><h3>Giao cho đơn vị hoặc cá nhân</h3>
+    <p class="ghichu">Mỗi dòng chọn một đơn vị hoặc một cá nhân, vai trò và hạn. Bỏ trống dòng không dùng. Phải có ít nhất một chủ trì.</p>
+    <table>
+      <tr><th>Đơn vị</th><th>hoặc Cá nhân</th><th>Vai trò</th><th>Hạn xử lý</th><th>Ưu tiên</th></tr>
+      {% for f in formset %}
+      <tr>
+        <td>{{ f.don_vi }}</td><td>{{ f.ca_nhan }}</td><td>{{ f.vai_tro }}</td>
+        <td>{{ f.han }}{% for e in f.han.errors %}<div class="loi">{{ e }}</div>{% endfor %}</td><td>{{ f.uu_tien }}</td>
+      </tr>
+      {% if f.non_field_errors %}<tr><td colspan="5"><div class="loi">{{ f.non_field_errors }}</div></td></tr>{% endif %}
+      {% endfor %}
+    </table>
+  </div>
+  <p class="ghichu">Sau khi xác nhận, mỗi nơi nhận có một nhiệm vụ ở trạng thái "Chờ xử lý"; việc xử lý tiếp tục ở Module 3.</p>
+  <div style="text-align:right">
+    <a class="bt o" href="{% url 'vanbanden:chi_dao' vb.pk %}">Quay lại</a>
+    <button class="bt" type="submit">Xác nhận giao việc</button>
+  </div>
+</form>
+{% endblock %}

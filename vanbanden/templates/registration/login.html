@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Đăng nhập tạm</title>
+<style>body{font-family:Arial,sans-serif;background:#f4f4f4;display:flex;justify-content:center;padding-top:80px}
+form{background:#fff;border:1px solid #d9dee5;border-radius:8px;padding:24px;width:320px}h2{margin:0 0 14px;color:#0b2e5c}
+label{display:block;font-weight:600;margin:10px 0 3px}input{width:100%;padding:8px;border:1px solid #c4ccd6;border-radius:6px;box-sizing:border-box}
+button{margin-top:16px;width:100%;padding:10px;border:0;border-radius:6px;background:#1f5fa8;color:#fff;font-weight:600;cursor:pointer}.loi{color:#b42318}</style></head>
+<body><form method="post">{% csrf_token %}<h2>Đăng nhập (tạm)</h2>
+{% if form.errors %}<p class="loi">Sai tên đăng nhập hoặc mật khẩu.</p>{% endif %}
+<label for="id_username">Tên đăng nhập</label>{{ form.username }}
+<label for="id_password">Mật khẩu</label>{{ form.password }}
+<input type="hidden" name="next" value="{{ next }}"><button type="submit">Đăng nhập</button></form></body></html>

@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# PyCharm
+.idea/
+
+# Media uploads (nếu không muốn đưa ảnh/file người dùng lên GitHub)
+media/

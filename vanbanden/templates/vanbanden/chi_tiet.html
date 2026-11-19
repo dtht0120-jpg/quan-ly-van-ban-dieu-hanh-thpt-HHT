@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Văn bản số {{ vb.so_den }}{% endblock %}
+{% block content %}
+<h1>Văn bản đến số {{ vb.so_den }}/{{ vb.nam }} <span class="bd {{ vb.trang_thai_vb }}">{{ vb.get_trang_thai_vb_display }}</span>
+  <span>
+    {% if co_the_sua %}<a class="bt o" href="{% url 'vanbanden:sua' vb.pk %}">Sửa thông tin</a>{% endif %}
+    {% if co_the_trinh %}<a class="bt" href="{% url 'vanbanden:trinh' %}?chon={{ vb.pk }}">Trình BGH</a>{% endif %}
+    {% if co_the_chi_dao %}<a class="bt" href="{% url 'vanbanden:chi_dao' vb.pk %}">Xem xét và chỉ đạo</a>{% endif %}
+    {% if co_the_mo_lai %}<a class="bt o" href="{% url 'vanbanden:mo_lai' vb.pk %}">Mở lại để chỉ đạo bổ sung</a>{% endif %}
+    <a class="bt o" href="{% url 'vanbanden:danh_sach' %}">Quay lại</a>
+  </span>
+</h1>
+<div class="g2">
+  <div>
+    <div class="k"><h3>Thông tin văn bản</h3>
+      <table>
+        <tr><td>Số/ký hiệu</td><td><b>{{ vb.so_ky_hieu }}</b></td></tr>
+        <tr><td>Ngày văn bản / ngày đến</td><td>{{ vb.ngay_van_ban|date:"d/m/Y" }} / {{ vb.ngay_nhan|date:"d/m/Y" }}</td></tr>
+        <tr><td>Cơ quan gửi</td><td>{{ vb.co_quan_gui }}</td></tr>
+        <tr><td>Loại · độ khẩn · hình thức nhận</td><td>{{ vb.ma_loai }} · {{ vb.get_do_khan_display }} · {{ vb.get_hinh_thuc_nhan_display }}</td></tr>
+        <tr><td>Trích yếu</td><td>{{ vb.trich_yeu }}</td></tr>
+        {% if vb.nguoi_ky_van_ban %}<tr><td>Người ký</td><td>{{ vb.nguoi_ky_van_ban }}</td></tr>{% endif %}
+        {% if vb.han_xu_ly %}<tr><td>Hạn xử lý</td><td>{{ vb.han_xu_ly|date:"d/m/Y" }}</td></tr>{% endif %}
+        {% if vb.ghi_chu %}<tr><td>Ghi chú</td><td>{{ vb.ghi_chu }}</td></tr>{% endif %}
+      </table>
+    </div>
+    <div class="k"><h3>Tệp đính kèm</h3>
+      {% for t in tai_lieu %}<div><a href="{{ t.tep.url }}" target="_blank">{{ t.ten_tep }}</a> <span class="ghichu">({{ t.dung_luong|filesizeformat }})</span></div>
+      {% empty %}<span class="ghichu">Chưa có tệp.</span>{% endfor %}
+    </div>
+    <div class="k"><h3>Lịch sử luân chuyển</h3>
+      <table>
+        {% for l in lich_su %}<tr><td>{{ l.thoi_gian|date:"d/m/Y H:i" }}</td><td>{{ l.nguoi_thuc_hien.ho_ten|default:l.nguoi_thuc_hien }}</td><td>{{ l.hanh_dong }}{% if l.ghi_chu %}<br><span class="ghichu">{{ l.ghi_chu }}</span>{% endif %}</td></tr>
+        {% empty %}<tr><td>Chưa có lịch sử.</td></tr>{% endfor %}
+      </table>
+    </div>
+  </div>
+  <div>
+    <div class="k"><h3>Bút phê của BGH</h3>
+      {% for c in chi_dao_list %}
+        <p style="margin:0 0 10px"><b>{{ c.nguoi_chi_dao.ho_ten|default:c.nguoi_chi_dao }}</b>{% if c.uy_quyen %} (thừa ủy quyền của {{ c.uy_quyen.nguoi_uy_quyen.ho_ten|default:c.uy_quyen.nguoi_uy_quyen }}){% endif %}
+        · {{ c.ngay_chi_dao|date:"d/m/Y H:i" }} · <span class="bd">{{ c.get_ket_luan_display }}</span><br>{{ c.noi_dung_but_phe|linebreaksbr }}</p>
+      {% empty %}<span class="ghichu">Chưa có chỉ đạo.</span>{% endfor %}
+    </div>
+    <div class="k"><h3>Nhiệm vụ liên quan và tiến độ</h3>
+      <table>
+        <tr><th>Nơi xử lý</th><th>Vai trò</th><th>Hạn</th><th>Tiến độ</th><th>Trạng thái</th></tr>
+        {% for n in nhiem_vu %}<tr><td>{{ n.phong_ban_nhan|default:n.nguoi_nhan }}</td><td>{{ n.get_vai_tro_xu_ly_display }}</td><td>{{ n.han_xu_ly|date:"d/m/Y" }}</td><td>{{ n.tien_do }}%</td><td>{{ n.get_trang_thai_nhiem_vu_display }}</td></tr>
+        {% empty %}<tr><td colspan="5" class="ghichu">Chưa có nhiệm vụ.</td></tr>{% endfor %}
+      </table>
+      <p class="ghichu">Chỉ xem. Việc xử lý thực hiện ở mục Điều hành và Phê duyệt / Bàn làm việc cá nhân.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

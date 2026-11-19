@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Xem xét văn bản{% endblock %}
+{% block content %}
+<h1>Xem xét văn bản số đến {{ vb.so_den }}/{{ vb.nam }} <span class="bd {{ vb.trang_thai_vb }}">{{ vb.get_trang_thai_vb_display }}</span></h1>
+<div class="g2">
+  <div class="k"><h3>Thông tin và tệp đính kèm</h3>
+    <p>Số/ký hiệu: <b>{{ vb.so_ky_hieu }}</b> · Ngày văn bản {{ vb.ngay_van_ban|date:"d/m/Y" }}<br>
+    Cơ quan gửi: {{ vb.co_quan_gui }} · Loại: {{ vb.ma_loai }} · Độ khẩn: <span class="bd {{ vb.do_khan }}">{{ vb.get_do_khan_display }}</span><br>
+    Trích yếu: {{ vb.trich_yeu }}</p>
+    {% for t in tai_lieu %}<div><a href="{{ t.tep.url }}" target="_blank">{{ t.ten_tep }}</a></div>{% endfor %}
+  </div>
+  <form method="post" class="k">
+    {% csrf_token %}
+    <h3>Ý kiến chỉ đạo</h3>
+    <div>{{ form.but_phe.label_tag }}{{ form.but_phe }}{% for e in form.but_phe.errors %}<div class="loi">{{ e }}</div>{% endfor %}</div>
+    <p style="font-weight:600;margin:12px 0 4px">{{ form.huong.label }}</p>
+    {% for r in form.huong %}<label style="font-weight:400">{{ r.tag }} {{ r.choice_label }}</label>{% endfor %}
+    <p style="text-align:right;margin-top:14px">
+      <a class="bt r" href="{% url 'vanbanden:tra_lai' vb.pk %}">Yêu cầu chỉnh sửa/bổ sung</a>
+      <a class="bt o" href="{% url 'vanbanden:chi_tiet' vb.pk %}">Quay lại</a>
+      <button class="bt" type="submit">Tiếp tục</button>
+    </p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Văn bản đến{% endblock %}
+{% block content %}
+<h1>Quản lý Văn bản đến
+  <span>
+    {% if la_van_thu %}<a class="bt o" href="{% url 'vanbanden:xuat_excel' %}?{{ qs_giu }}">Xuất Excel</a><a class="bt o" href="{% url 'vanbanden:trinh' %}">Trình BGH</a><a class="bt" href="{% url 'vanbanden:dang_ky' %}">+ Đăng ký văn bản đến</a>{% endif %}
+  </span>
+</h1>
+<form method="get" class="k">
+  <div class="g">
+    <div>{{ form.tu_khoa.label_tag }}{{ form.tu_khoa }}</div>
+    <div>{{ form.tu_ngay.label_tag }}{{ form.tu_ngay }}</div>
+    <div>{{ form.den_ngay.label_tag }}{{ form.den_ngay }}</div>
+    <div>{{ form.co_quan.label_tag }}{{ form.co_quan }}</div>
+    <div>{{ form.loai.label_tag }}{{ form.loai }}</div>
+    <div>{{ form.do_khan.label_tag }}{{ form.do_khan }}</div>
+    <div>{{ form.trang_thai.label_tag }}{{ form.trang_thai }}</div>
+  </div>
+  <p style="margin:12px 0 0"><button class="bt" type="submit" style="margin-left:0">Tìm kiếm</button> <a class="bt o" href="{% url 'vanbanden:danh_sach' %}">Xóa lọc</a></p>
+</form>
+<div class="k" style="padding:0">
+<table>
+  <tr><th>Số đến</th><th>Số/ký hiệu</th><th>Trích yếu</th><th>Cơ quan gửi</th><th>Ngày đến</th><th>Độ khẩn</th><th>Trạng thái</th></tr>
+  {% for vb in page %}
+  <tr>
+    <td>{{ vb.so_den }}/{{ vb.nam }}</td>
+    <td><a href="{% url 'vanbanden:chi_tiet' vb.pk %}">{{ vb.so_ky_hieu }}</a></td>
+    <td>{{ vb.trich_yeu }}</td>
+    <td>{{ vb.co_quan_gui }}</td>
+    <td>{{ vb.ngay_nhan|date:"d/m/Y" }}</td>
+    <td><span class="bd {{ vb.do_khan }}">{{ vb.get_do_khan_display }}</span></td>
+    <td><span class="bd {{ vb.trang_thai_vb }}">{{ vb.get_trang_thai_vb_display }}</span></td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7">Không tìm thấy văn bản phù hợp.</td></tr>
+  {% endfor %}
+</table>
+</div>
+<p class="ghichu">
+  Tổng {{ page.paginator.count }} văn bản · trang {{ page.number }}/{{ page.paginator.num_pages }}
+  {% if page.has_previous %} · <a href="?{{ qs_giu }}&page={{ page.previous_page_number }}">Trang trước</a>{% endif %}
+  {% if page.has_next %} · <a href="?{{ qs_giu }}&page={{ page.next_page_number }}">Trang sau</a>{% endif %}
+</p>
+{% endblock %}

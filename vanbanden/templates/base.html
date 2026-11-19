@@ -1,0 +1,63 @@
+{% comment %}
+  BASE TẠM để chạy thử app. Khi nhóm có base.html chung (trong thư mục templates của project)
+  thì file đó được ưu tiên và có thể xóa file này. base.html chung cần có hai khối tên content và title (dạng block).
+{% endcomment %}
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Văn bản đến{% endblock %} – THPT Hoàng Hoa Thám</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;font-size:14px;color:#1f2933;background:#f4f4f4;display:flex;min-height:100vh}
+a{color:#1f5fa8}
+.side{width:210px;background:#0b2e5c;color:#fff;flex:none;padding-top:8px}
+.side .logo{padding:16px 16px;font-weight:700;font-size:13px}
+.side a{display:block;padding:12px 16px;color:#fff;text-decoration:none;opacity:.9}
+.side a.on{background:#1f5fa8;font-weight:700;opacity:1}
+.main{flex:1;min-width:0}
+.top{height:54px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.top input{width:300px;padding:8px 12px;border:0;border-radius:6px;background:#f0f2f5}
+.top .nd{color:#52606d}
+.noidung{padding:20px 24px}
+h1{margin:0 0 14px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+h3{margin:0 0 10px}
+.k{background:#fff;border:1px solid #d9dee5;border-radius:8px;padding:16px;margin-bottom:14px}
+.bt{display:inline-block;padding:8px 16px;border:1px solid #1f5fa8;border-radius:6px;background:#1f5fa8;color:#fff;font-weight:600;font-size:13px;text-decoration:none;cursor:pointer;margin-left:6px}
+.bt.o{background:#fff;color:#1f5fa8}.bt.r{background:#fff;color:#b42318;border-color:#b42318}
+table{width:100%;border-collapse:collapse}th{text-align:left;background:#eef2f7;padding:9px}td{padding:9px;border-top:1px solid #e4e8ee;vertical-align:top}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{display:block;font-weight:600;margin-bottom:3px}
+input[type=text],input[type=date],select,textarea,input[type=file],input:not([type]){width:100%;padding:8px 10px;border:1px solid #c4ccd6;border-radius:6px;background:#fff;font:inherit}
+.loi{color:#b42318;font-size:12px;margin-top:2px}
+.bd{padding:2px 9px;border-radius:10px;font-size:12px;font-weight:600;white-space:nowrap;background:#eceff3;color:#3e4c59}
+.DA_DANG_KY{background:#eceff3;color:#3e4c59}.DA_TRINH_BGH,.DANG_XU_LY{background:#fdf0dc;color:#8a4b05}
+.TRA_LAI_BO_SUNG,.KHAN,.HOA_TOC{background:#fde7e5;color:#b42318}.DA_CHI_DAO{background:#e6eef8;color:#1f5fa8}.DA_XU_LY_XONG{background:#dff3e8;color:#1a7f4b}
+.msg{padding:10px 14px;border-radius:6px;margin-bottom:12px;background:#e6eef8}.msg.success{background:#dff3e8}.msg.warning,.msg.error{background:#fdf0dc}
+.ghichu{color:#52606d;font-size:13px}
+</style>
+</head>
+<body>
+<div class="side">
+  <div class="logo">THPT HOÀNG HOA THÁM</div>
+  <a href="#">Tổng quan</a>
+  <a class="on" href="{% url 'vanbanden:danh_sach' %}">Quản lý Văn bản đến</a>
+  <a href="#">Quản lý Văn bản đi</a>
+  <a href="#">Điều hành và Phê duyệt</a>
+  <a href="#">Bàn làm việc cá nhân</a>
+  <a href="#">Quản trị hệ thống</a>
+</div>
+<div class="main">
+  <div class="top">
+    <form action="{% url 'vanbanden:danh_sach' %}" method="get"><input name="tu_khoa" placeholder="Tìm kiếm số hiệu, trích yếu..." value="{{ request.GET.tu_khoa }}"></form>
+    <span class="nd">{{ request.user.get_username }}
+      <form method="post" action="{% url 'logout' %}" style="display:inline">{% csrf_token %}<button class="bt o" type="submit">Đăng xuất</button></form></span>
+  </div>
+  <div class="noidung">
+    {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+</body>
+</html>
