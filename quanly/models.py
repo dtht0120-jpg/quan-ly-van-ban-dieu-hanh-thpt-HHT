@@ -197,6 +197,7 @@ class NguoiDung(AbstractUser):
     phong_ban = models.ForeignKey(PhongBan, on_delete=models.SET_NULL, null=True, blank=True)
     vai_tro = models.ManyToManyField(VaiTro, related_name='nguoi_dung', blank=True)  # một người có nhiều vai trò
     phai_doi_mat_khau = models.BooleanField(default=True)
+    la_hieu_truong = models.BooleanField(default=False)
 
     def __str__(self):
         return self.ho_ten
